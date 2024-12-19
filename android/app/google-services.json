@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "809643039019",
+    "project_id": "finalwmp-43477",
+    "storage_bucket": "finalwmp-43477.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:809643039019:android:d9b5962c4a39785b5fcd6e",
+        "android_client_info": {
+          "package_name": "com.example.project_final"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmlEpgMb7Eww2w0wdLtTcYywit6NtOgFo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:809643039019:android:bd03f7a92643ce6c5fcd6e",
+        "android_client_info": {
+          "package_name": "com.example.wmp_2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmlEpgMb7Eww2w0wdLtTcYywit6NtOgFo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
