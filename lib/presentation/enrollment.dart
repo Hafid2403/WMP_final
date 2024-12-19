@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'savefile.dart';
 
 class EnrollmentPage extends StatefulWidget {
   @override
@@ -34,13 +34,13 @@ class _EnrollmentPageState extends State<EnrollmentPage> {
 
   void _toggleSubject(Map<String, dynamic> subject) {
     setState(() {
-      if (_selectedSubjects.any((s) => s['id'] == subject['id'])) {
-        _selectedSubjects.removeWhere((s) => s['id'] == subject['id']);
-        _totalCredits -= subject['credits'] as int;
+      if (_selectedSubjects.contains(subject)) {
+        _selectedSubjects.remove(subject);
+        _totalCredits -= (subject['credits'] as num).toInt();
       } else {
         if (_totalCredits + (subject['credits'] as num).toInt() <= 24) {
           _selectedSubjects.add(subject);
-          _totalCredits += subject['credits'] as int;
+          _totalCredits += (subject['credits'] as num).toInt();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Credit limit exceeded!')),
@@ -53,7 +53,7 @@ class _EnrollmentPageState extends State<EnrollmentPage> {
   Future<void> saveEnrollment() async {
     if (_selectedSubjects.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No subjects selected!')),
+        SnackBar(content: Text('No subjects selected for enrollment!')),
       );
       return;
     }
@@ -65,16 +65,76 @@ class _EnrollmentPageState extends State<EnrollmentPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Enrollment saved successfully!')),
     );
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => EnrollmentResultPage()),
+  }
+
+  Future<void> _addSubject() async {
+    TextEditingController nameController = TextEditingController();
+    TextEditingController creditsController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Add Subject'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: InputDecoration(labelText: 'Subject Name'),
+            ),
+            TextField(
+              controller: creditsController,
+              decoration: InputDecoration(labelText: 'Credits'),
+              keyboardType: TextInputType.number,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              String name = nameController.text.trim();
+              int credits = int.tryParse(creditsController.text.trim()) ?? 0;
+
+              if (name.isEmpty || credits <= 0) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Invalid input!')),
+                );
+                return;
+              }
+
+              await FirebaseFirestore.instance.collection('subjects').add({
+                'name': name,
+                'credits': credits,
+              });
+              Navigator.pop(context);
+              fetchSubjects();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Subject added successfully!')),
+              );
+            },
+            child: Text('Add'),
+          ),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Enrollment Page')),
+      appBar: AppBar(
+        title: Text('Enrollment Page'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: _addSubject,
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Expanded(
