@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:wmp_2/presentation/savefile.dart';
 
 class EnrollmentPage extends StatefulWidget {
   @override
@@ -169,6 +170,15 @@ class _EnrollmentPageState extends State<EnrollmentPage> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EnrollmentResultPage(),
+                    ));
+              },
+              child: Text('Go to See Result')),
           ElevatedButton(
             onPressed: saveEnrollment,
             child: Text('Save Enrollment'),
